@@ -8,6 +8,7 @@ Membuat koneksi ke data base dan melakukan create, insert update delete dan trun
 asyncpg adalah database library interface yang dirancang khusus untuk PostgreSQL dan Python/asyncio
 asyncio paket Python yang menyediakan fondasi dan API untuk menjalankan dan mengelola coroutine
 Performance 3x lebih cepat dari psycopg2
+
 Source : https://github.com/MagicStack/asyncpg
 
 async/await: digunakan untuk mendefinisikan coroutine
@@ -81,15 +82,20 @@ Perintah sql yang dimaksud adalah perintah sql untuk create table, insert data, 
 
 #Create table
   Basic statement dalam membuat table baru pada database:
+  
    create table IF NOT EXISTS {Table} (
             {Columns},
             CONSTRAINT {Table}_pkey PRIMARY KEY ({PrimaryKey})
         );
+        
   Index adalah sebuah objek dalam sistem database yang dapat mempercepat proses pencarian (query) data:
+  
     CREATE INDEX idx_{Table} ON {Table} USING btree ({ColumnIndex});
+    
   Trigger adalah fungsi yang akan dieksekusi sebelum atau sesudah proses insert, update atau delete pada suatu tabel, 
   baik untuk setiap perubahan record pada tabel maupun tiap kali perintah SQL dijalankan.
   Membuat function trigger :
+  
     CREATE OR REPLACE FUNCTION {ColumnTrigger}()
         RETURNS TRIGGER AS $$
         BEGIN
@@ -97,28 +103,35 @@ Perintah sql yang dimaksud adalah perintah sql untuk create table, insert data, 
             RETURN NEW;
         END;
         $$ LANGUAGE plpgsql;
+        
    Setelah function terbuat, selanjutnya kita siapkan sebuah trigger yang akan mengaktifkan function 
    jika ada aktivitas insert atau update di tabel titik object :
+   
    CREATE TRIGGER {ColumnTrigger}
         BEFORE UPDATE ON {Table}
         FOR EACH ROW
         EXECUTE PROCEDURE {ColumnTrigger}();
+        
    Sumber : https://www.postgresqltutorial.com/postgresql-triggers/creating-first-trigg er-postgresql/
    
    #Insert dan Update
    Basic statement insert:
+   
     insert into {Table} ({Column})
             values (
                 {Value}
             );
+            
     Pada statement insert, nama table , Column dan Value dibuat menjadi parameter sehingga dapat 
     diberikan nilai sesuai dengan yang kita inginkan pada saat menjalankan aplikasi di Main.py
     
     Basic statement Update:
+    
     update {Table}
         set {SetColumn}
         where {FilterColumn}
         returning *;
+        
     Pada statement Update, nama table , SetColumn (nilai baru yang akan dimasukkan) dan 
     FilterColumn (Lokasi data nilai yang akan dirubah) dibuat menjadi parameter sehingga dapat 
     diberikan nilai sesuai dengan yang kita inginkan pada saat menjalankan aplikasi di Main.py
@@ -126,9 +139,11 @@ Perintah sql yang dimaksud adalah perintah sql untuk create table, insert data, 
  5. Main.py
    Import file connection , sqlcommand dan transaction data
    Untuk mengeksekusi coroutine dari connection, kita membutuhkan sebuah event loop:
+   
    r = loop.run_until_complete(
                 Connection.DBClient.ConnectionDB()
                 )
+                
    Menjalankan function create table.
     Format parameter pada SqlCommnd.py di class queryservices, meberikan argumen nilai sesuai parameter yang ada.
     Contoh pada create_table:
